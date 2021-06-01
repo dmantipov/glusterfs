@@ -556,7 +556,7 @@ glusterd_submit_request(struct rpc_clnt *rpc, void *req, call_frame_t *frame,
 
     if (req) {
         req_size = xdr_sizeof(xdrproc, req);
-        iobuf = iobuf_get2(this->ctx->iobuf_pool, req_size);
+        iobuf = iobuf_get2(getctx(this)->iobuf_pool, req_size);
         if (!iobuf) {
             goto out;
         };
@@ -2159,7 +2159,7 @@ glusterd_volume_start_glusterfs(glusterd_volinfo_t *volinfo,
 retry:
     runinit(&runner);
 
-    if (this->ctx->cmd_args.vgtool != _gf_none) {
+    if (getctx(this)->cmd_args.vgtool != _gf_none) {
         /* Run bricks with valgrind. */
         if (volinfo->logdir) {
             len = snprintf(valgrind_logfile, PATH_MAX, "%s/valgrind-%s-%s.log",
@@ -2174,7 +2174,7 @@ retry:
             goto out;
         }
 
-        if (this->ctx->cmd_args.vgtool == _gf_memcheck)
+        if (getctx(this)->cmd_args.vgtool == _gf_memcheck)
             runner_add_args(&runner, "valgrind", "--leak-check=full",
                             "--trace-children=yes", "--track-origins=yes",
                             NULL);
@@ -2264,7 +2264,7 @@ retry:
         }
     }
 
-    if (this->ctx->cmd_args.logger == gf_logger_syslog) {
+    if (getctx(this)->cmd_args.logger == gf_logger_syslog) {
         runner_argprintf(&runner, "--logger=syslog");
     }
 
@@ -6105,7 +6105,7 @@ send_attach_req(xlator_t *this, struct rpc_clnt *rpc, char *path,
         goto free_iobref;
     }
 
-    frame = create_frame(this, this->ctx->pool);
+    frame = create_frame(this, getctx(this)->pool);
     if (!frame) {
         gf_smsg(this->name, GF_LOG_ERROR, errno, GD_MSG_FRAME_CREATE_FAIL,
                 NULL);
@@ -12929,7 +12929,7 @@ glusterd_launch_synctask(synctask_fn_t fn, void *opaque)
 
     /* synclock_lock must be called from within synctask, @fn must call it
      * before it starts with its work*/
-    ret = synctask_new(this->ctx->env, fn, gd_default_synctask_cbk, NULL,
+    ret = synctask_new(getctx(this)->env, fn, gd_default_synctask_cbk, NULL,
                        opaque);
     if (ret)
         gf_msg(this->name, GF_LOG_CRITICAL, 0, GD_MSG_SPAWN_SVCS_FAIL,

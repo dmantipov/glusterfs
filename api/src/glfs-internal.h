@@ -456,7 +456,7 @@ glfs_process_upcall_event(struct glfs *fs, void *data)
             goto label;                                                        \
         }                                                                      \
         old_THIS = THIS;                                                       \
-        THIS = glfd->fd->inode->table->xl->ctx->root;                          \
+        THIS = getctx(glfd->fd->inode->table->xl)->root;                       \
     } while (0)
 
 #define __GLFS_LOCK_WAIT(fs)                                                   \

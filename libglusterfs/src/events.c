@@ -45,7 +45,7 @@ _gf_event(eventtypes_t event, const char *fmt, ...)
     char *volfile_server_transport = NULL;
 
     /* Global context */
-    ctx = this->ctx;
+    ctx = getctx(this);
 
     if (event < 0 || event >= EVENT_LAST) {
         ret = EVENT_ERROR_INVALID_INPUTS;

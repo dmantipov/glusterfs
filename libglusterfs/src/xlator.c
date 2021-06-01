@@ -724,10 +724,10 @@ xlator_mem_acct_init(xlator_t *xl, int num_types)
     if (!xl)
         return -1;
 
-    if (!xl->ctx)
+    if (!getctx(xl))
         return -1;
 
-    if (!xl->ctx->mem_acct_enable)
+    if (!getctx(xl)->mem_acct_enable)
         return 0;
 
     xl->mem_acct = MALLOC(sizeof(struct mem_acct) +
@@ -824,7 +824,7 @@ xlator_members_free(xlator_t *xl)
 
     GF_FREE(xl->name);
     GF_FREE(xl->type);
-    if (!(xl->ctx && xl->ctx->cmd_args.vgtool != _gf_none) && xl->dlhandle)
+    if (!(getctx(xl) && getctx(xl)->cmd_args.vgtool != _gf_none) && xl->dlhandle)
         dlclose(xl->dlhandle);
     if (xl->options)
         dict_unref(xl->options);
@@ -958,11 +958,11 @@ xlator_mem_cleanup(xlator_t *this)
     glusterfs_graph_t *graph = NULL;
     gf_boolean_t graph_cleanup = _gf_false;
 
-    if (this->call_cleanup || !this->ctx)
+    if (this->call_cleanup || !getctx(this))
         return;
 
     this->call_cleanup = 1;
-    ctx = this->ctx;
+    ctx = getctx(this);
 
     inode_table = this->itable;
     if (inode_table) {
@@ -1370,7 +1370,7 @@ is_gf_log_command(xlator_t *this, const char *name, char *value, size_t size)
         gf_smsg("glusterfs", gf_log_get_loglevel(), 0, LG_MSG_SET_LOG_LEVEL,
                 "new-value=%d", log_level, "old-value=%d",
                 gf_log_get_loglevel(), NULL);
-        gf_log_set_loglevel(this->ctx, log_level);
+        gf_log_set_loglevel(getctx(this), log_level);
         ret = 0;
         goto out;
     }
@@ -1385,7 +1385,7 @@ is_gf_log_command(xlator_t *this, const char *name, char *value, size_t size)
         goto out;
     }
 
-    ctx = this->ctx;
+    ctx = getctx(this);
     if (!ctx)
         goto out;
     if (!ctx->active)
@@ -1588,4 +1588,16 @@ graph_total_client_xlator(glusterfs_graph_t *graph)
     }
 out:
     return count;
+}
+
+glusterfs_ctx_t *
+getctx(xlator_t *xl)
+{
+    return xl->ctx;
+}
+
+void
+setctx(xlator_t *xl, glusterfs_ctx_t *ctx)
+{
+    xl->ctx = ctx;
 }

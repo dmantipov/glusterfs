@@ -2396,7 +2396,7 @@ dht_start_rebalance_task(xlator_t *this, call_frame_t *frame)
     syncop_frame->root->pid = GF_CLIENT_PID_DEFRAG;
     set_lk_owner_from_ptr(&syncop_frame->root->lk_owner, syncop_frame->root);
 
-    ret = synctask_new(this->ctx->env, rebalance_task,
+    ret = synctask_new(getctx(this)->env, rebalance_task,
                        rebalance_task_completion, syncop_frame, frame);
 out:
     if ((ret < 0) && syncop_frame) {
@@ -2412,7 +2412,7 @@ gf_listener_stop(xlator_t *this)
     cmd_args_t *cmd_args = NULL;
     int ret = 0;
 
-    ctx = this->ctx;
+    ctx = getctx(this);
     GF_ASSERT(ctx);
     cmd_args = &ctx->cmd_args;
     if (cmd_args->sock_file) {
@@ -2794,7 +2794,7 @@ gf_defrag_migrate_single_file(void *opaque)
 
     old_THIS = THIS;
     THIS = this;
-    statfs_frame = create_frame(this, this->ctx->pool);
+    statfs_frame = create_frame(this, getctx(this)->pool);
     if (!statfs_frame) {
         gf_msg(this->name, GF_LOG_ERROR, DHT_MSG_NO_MEMORY, ENOMEM,
                "Insufficient memory. Frame creation failed");
@@ -4243,7 +4243,7 @@ gf_defrag_start_crawl(void *data)
     if (!this)
         goto exit;
 
-    ctx = this->ctx;
+    ctx = getctx(this);
     if (!ctx)
         goto exit;
 
@@ -4277,7 +4277,7 @@ gf_defrag_start_crawl(void *data)
     old_THIS = THIS;
     THIS = this;
 
-    statfs_frame = create_frame(this, this->ctx->pool);
+    statfs_frame = create_frame(this, getctx(this)->pool);
     if (!statfs_frame) {
         gf_msg(this->name, GF_LOG_ERROR, DHT_MSG_NO_MEMORY, ENOMEM,
                "Insufficient memory. Frame creation failed");
@@ -4480,7 +4480,7 @@ gf_defrag_start(void *data)
     if (!defrag)
         goto out;
 
-    frame = create_frame(this, this->ctx->pool);
+    frame = create_frame(this, getctx(this)->pool);
     if (!frame)
         goto out;
 
@@ -4492,7 +4492,7 @@ gf_defrag_start(void *data)
 
     old_THIS = THIS;
     THIS = this;
-    ret = synctask_new(this->ctx->env, gf_defrag_start_crawl, gf_defrag_done,
+    ret = synctask_new(getctx(this)->env, gf_defrag_start_crawl, gf_defrag_done,
                        frame, this);
 
     if (ret)

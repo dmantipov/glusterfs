@@ -990,7 +990,7 @@ shard_initiate_evicted_inode_fsync(xlator_t *this, inode_t *inode)
     fd_t *anon_fd = NULL;
     call_frame_t *fsync_frame = NULL;
 
-    fsync_frame = create_frame(this, this->ctx->pool);
+    fsync_frame = create_frame(this, getctx(this)->pool);
     if (!fsync_frame) {
         gf_msg(this->name, GF_LOG_WARNING, ENOMEM, SHARD_MSG_MEMALLOC_FAILED,
                "Failed to create new frame "
@@ -1547,7 +1547,7 @@ shard_start_background_deletion(xlator_t *this)
     if (!i_cleanup)
         return 0;
 
-    cleanup_frame = create_frame(this, this->ctx->pool);
+    cleanup_frame = create_frame(this, getctx(this)->pool);
     if (!cleanup_frame) {
         gf_msg(this->name, GF_LOG_WARNING, ENOMEM, SHARD_MSG_MEMALLOC_FAILED,
                "Failed to create "
@@ -1558,7 +1558,7 @@ shard_start_background_deletion(xlator_t *this)
 
     set_lk_owner_from_ptr(&cleanup_frame->root->lk_owner, cleanup_frame->root);
 
-    ret = synctask_new(this->ctx->env, shard_delete_shards,
+    ret = synctask_new(getctx(this)->env, shard_delete_shards,
                        shard_delete_shards_cbk, cleanup_frame, cleanup_frame);
     if (ret < 0) {
         gf_msg(this->name, GF_LOG_WARNING, errno,
@@ -4313,7 +4313,7 @@ shard_acquire_entrylk(call_frame_t *frame, xlator_t *this, inode_t *inode,
     call_frame_t *entrylk_frame = NULL;
 
     local = frame->local;
-    entrylk_frame = create_frame(this, this->ctx->pool);
+    entrylk_frame = create_frame(this, getctx(this)->pool);
     if (!entrylk_frame) {
         gf_msg(this->name, GF_LOG_WARNING, ENOMEM, SHARD_MSG_MEMALLOC_FAILED,
                "Failed to create new frame "
@@ -4434,7 +4434,7 @@ shard_acquire_inodelk(call_frame_t *frame, xlator_t *this, loc_t *loc)
     shard_inodelk_t *int_inodelk = NULL;
 
     local = frame->local;
-    lk_frame = create_frame(this, this->ctx->pool);
+    lk_frame = create_frame(this, getctx(this)->pool);
     if (!lk_frame) {
         gf_msg(this->name, GF_LOG_WARNING, ENOMEM, SHARD_MSG_MEMALLOC_FAILED,
                "Failed to create new frame "
@@ -5308,7 +5308,7 @@ shard_post_lookup_readv_handler(call_frame_t *frame, xlator_t *this)
             0,
         };
 
-        iobuf = iobuf_get2(this->ctx->iobuf_pool, local->req_size);
+        iobuf = iobuf_get2(getctx(this)->iobuf_pool, local->req_size);
         if (!iobuf)
             goto err;
 
@@ -5339,7 +5339,7 @@ shard_post_lookup_readv_handler(call_frame_t *frame, xlator_t *this)
     if (!local->inode_list)
         goto err;
 
-    iobuf = iobuf_get2(this->ctx->iobuf_pool, local->total_size);
+    iobuf = iobuf_get2(getctx(this)->iobuf_pool, local->total_size);
     if (!iobuf)
         goto err;
 

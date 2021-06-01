@@ -264,7 +264,7 @@ mgmt_get_volinfo_cbk(struct rpc_req *req, struct iovec *iov, int count,
     struct syncargs *args;
 
     frame = myframe;
-    ctx = frame->this->ctx;
+    ctx = getctx(frame->this);
     args = frame->local;
 
     if (!ctx) {
@@ -556,7 +556,7 @@ glfs_mgmt_getspec_cbk(struct rpc_req *req, struct iovec *iov, int count,
     char template[] = "/tmp/gfapi.volfile.XXXXXX";
 
     frame = myframe;
-    ctx = frame->this->ctx;
+    ctx = getctx(frame->this);
 
     if (!ctx) {
         gf_smsg(frame->this->name, GF_LOG_ERROR, EINVAL, API_MSG_NULL,
@@ -824,7 +824,7 @@ mgmt_rpc_notify(struct rpc_clnt *rpc, void *mydata, rpc_clnt_event_t event,
     this = mydata;
     rpc_trans = rpc->conn.trans;
 
-    ctx = this->ctx;
+    ctx = getctx(this);
     if (!ctx)
         goto out;
 

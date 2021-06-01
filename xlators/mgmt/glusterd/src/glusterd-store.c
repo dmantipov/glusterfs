@@ -1572,7 +1572,7 @@ glusterd_store_volinfo(glusterd_volinfo_t *volinfo,
     glusterfs_ctx_t *ctx = NULL;
     xlator_t *this = THIS;
 
-    ctx = this->ctx;
+    ctx = getctx(this);
     GF_ASSERT(ctx);
     GF_ASSERT(volinfo);
 

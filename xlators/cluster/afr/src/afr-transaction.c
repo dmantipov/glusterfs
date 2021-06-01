@@ -1234,7 +1234,7 @@ afr_ta_post_op_synctask(xlator_t *this, afr_local_t *local)
                "Failed to create ta_frame");
         goto err;
     }
-    ret = synctask_new(this->ctx->env, afr_ta_post_op_do, afr_ta_post_op_done,
+    ret = synctask_new(getctx(this)->env, afr_ta_post_op_do, afr_ta_post_op_done,
                        ta_frame, local);
     if (ret) {
         gf_msg(this->name, GF_LOG_ERROR, ENOMEM, AFR_MSG_THIN_ARB,
@@ -2571,7 +2571,7 @@ afr_changelog_post_op(call_frame_t *frame, xlator_t *this)
 
         GF_ASSERT(lock->delay_timer == NULL);
         lock->delay_timer = gf_timer_call_after(
-            this->ctx, delta, afr_delayed_changelog_wake_up_cbk, local);
+		getctx(this), delta, afr_delayed_changelog_wake_up_cbk, local);
         if (!lock->delay_timer) {
             lock->release = _gf_true;
         } else {
@@ -2660,7 +2660,7 @@ __afr_eager_lock_handle(afr_local_t *local, gf_boolean_t *take_lock,
             lock->release = _gf_true;
         } else if (lock->delay_timer) {
             lock->release = _gf_true;
-            if (gf_timer_call_cancel(this->ctx, lock->delay_timer)) {
+            if (gf_timer_call_cancel(getctx(this), lock->delay_timer)) {
                 /* It will be put in frozen list
                  * in the code flow below*/
             } else {
@@ -2679,7 +2679,7 @@ __afr_eager_lock_handle(afr_local_t *local, gf_boolean_t *take_lock,
 
     if (lock->delay_timer) {
         *take_lock = _gf_false;
-        if (gf_timer_call_cancel(this->ctx, lock->delay_timer)) {
+        if (gf_timer_call_cancel(getctx(this), lock->delay_timer)) {
             list_add_tail(&local->transaction.wait_list, &lock->frozen);
         } else {
             *timer_local = list_entry(lock->post_op.next, afr_local_t,

@@ -2319,7 +2319,7 @@ svs_readv(call_frame_t *frame, xlator_t *this, fd_t *fd, size_t size,
 
     glfd = sfd->fd;
 
-    iobuf = iobuf_get2(this->ctx->iobuf_pool, size);
+    iobuf = iobuf_get2(getctx(this)->iobuf_pool, size);
     if (!iobuf) {
         op_ret = -1;
         op_errno = ENOMEM;
@@ -2646,7 +2646,7 @@ fini(xlator_t *this)
     GF_ASSERT(this);
     priv = this->private;
     this->private = NULL;
-    ctx = this->ctx;
+    ctx = getctx(this);
     if (!ctx)
         gf_msg(this->name, GF_LOG_ERROR, 0, SVS_MSG_INVALID_GLFS_CTX,
                "Invalid ctx found");

@@ -517,7 +517,7 @@ gf_proc_dump_dict_info(glusterfs_ctx_t *ctx)
 static void
 gf_proc_dump_single_xlator_info(xlator_t *trav)
 {
-    glusterfs_ctx_t *ctx = trav->ctx;
+    glusterfs_ctx_t *ctx = getctx(trav);
     char itable_key[1024] = {
         0,
     };

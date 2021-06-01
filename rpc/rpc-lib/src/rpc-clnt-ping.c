@@ -254,7 +254,7 @@ rpc_clnt_ping(struct rpc_clnt *rpc)
     local = GF_MALLOC(sizeof(struct ping_local), gf_common_ping_local_t);
     if (!local)
         return ret;
-    frame = create_frame(THIS, THIS->ctx->pool);
+    frame = create_frame(THIS, getctx(THIS)->pool);
     if (!frame) {
         GF_FREE(local);
         return ret;

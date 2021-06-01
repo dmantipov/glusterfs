@@ -129,7 +129,7 @@ gf_mem_acct_enabled(void)
     xlator_t *x = THIS;
     /* Low-level __gf_xxx() may be called
        before ctx is initialized. */
-    return x->ctx && x->ctx->mem_acct_enable;
+    return getctx(x) && getctx(x)->mem_acct_enable;
 }
 
 void *

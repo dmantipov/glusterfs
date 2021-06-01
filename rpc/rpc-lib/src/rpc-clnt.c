@@ -1082,7 +1082,7 @@ rpc_clnt_new(dict_t *options, xlator_t *owner, char *name,
 {
     int ret = -1;
     struct rpc_clnt *rpc = NULL;
-    glusterfs_ctx_t *ctx = owner->ctx;
+    glusterfs_ctx_t *ctx = getctx(owner);
 
     rpc = GF_CALLOC(1, sizeof(*rpc), gf_common_mt_rpcclnt_t);
     if (!rpc) {

@@ -113,7 +113,7 @@ send_brick_req(xlator_t *this, struct rpc_clnt *rpc, char *path, int op)
     }
     pthread_mutex_unlock(&rpc->conn.lock);
 
-    frame = create_frame(this, this->ctx->pool);
+    frame = create_frame(this, getctx(this)->pool);
     if (!frame) {
         ret = -1;
         goto out;

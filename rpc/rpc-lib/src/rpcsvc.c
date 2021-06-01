@@ -342,7 +342,7 @@ rpcsvc_program_actor(rpcsvc_request_t *req)
         goto err;
     }
 
-    if (svc->xl->ctx->measure_latency) {
+    if (getctx(svc->xl)->measure_latency) {
         timespec_now(&req->begin);
     }
 
@@ -807,7 +807,7 @@ rpcsvc_handle_rpc_call(rpcsvc_t *svc, rpc_transport_t *trans,
         }
 
         if (req->synctask) {
-            ret = synctask_new(THIS->ctx->env, (synctask_fn_t)actor_fn,
+            ret = synctask_new(getctx(THIS)->env, (synctask_fn_t)actor_fn,
                                rpcsvc_check_and_reply_error, NULL, req);
         } else if (req->ownthread) {
             value = pthread_getspecific(req->prog->req_queue_key);

@@ -66,7 +66,7 @@ get_new_data()
     if (global_ctx) {
         data = mem_get(global_ctx->dict_data_pool);
     } else {
-        data = mem_get(THIS->ctx->dict_data_pool);
+        data = mem_get(getctx(THIS)->dict_data_pool);
     }
 
     if (!data)
@@ -81,7 +81,7 @@ get_new_data()
 static dict_t *
 get_new_dict_full(int size_hint)
 {
-    dict_t *dict = mem_get0(THIS->ctx->dict_pool);
+    dict_t *dict = mem_get0(getctx(THIS)->dict_pool);
 
     if (!dict) {
         return NULL;
@@ -107,7 +107,7 @@ get_new_dict_full(int size_hint)
      * to fix this.
      */
     GF_ASSERT(size_hint <= (sizeof(data_pair_t) / sizeof(data_pair_t *)));
-    dict->members = mem_get0(THIS->ctx->dict_pair_pool);
+    dict->members = mem_get0(getctx(THIS)->dict_pair_pool);
     if (!dict->members) {
         mem_put(dict);
         return NULL;
@@ -328,7 +328,7 @@ data_copy(data_t *old)
         return NULL;
     }
 
-    data_t *newdata = mem_get0(THIS->ctx->dict_data_pool);
+    data_t *newdata = mem_get0(getctx(THIS)->dict_data_pool);
     if (!newdata) {
         return NULL;
     }
@@ -445,7 +445,7 @@ dict_set_lk(dict_t *this, char *key, const int key_len, data_t *value,
     }
 
     if (this->free_pair.key) { /* the free_pair is used */
-        pair = mem_get(THIS->ctx->dict_pair_pool);
+        pair = mem_get(getctx(THIS)->dict_pair_pool);
         if (!pair) {
             if (key_free)
                 GF_FREE(key);
@@ -762,7 +762,7 @@ dict_destroy(dict_t *this)
     free(this->extra_stdfree);
 
     /* update 'ctx->stats.dict.details' using max_count */
-    ctx = THIS->ctx;
+    ctx = getctx(THIS);
 
     /* NOTE: below logic is not totaly race proof */
     /* thread0 and thread1 gets current_max as 10 */
@@ -2218,7 +2218,7 @@ _dict_modify_flag(dict_t *this, char *key, int flag, int op)
                 BIT_CLEAR((unsigned char *)(data->data), flag);
 
             if (this->free_pair.key) { /* the free pair is in use */
-                pair = mem_get0(THIS->ctx->dict_pair_pool);
+                pair = mem_get0(getctx(THIS)->dict_pair_pool);
                 if (!pair) {
                     gf_smsg("dict", GF_LOG_ERROR, ENOMEM, LG_MSG_NO_MEMORY,
                             "dict pair", NULL);

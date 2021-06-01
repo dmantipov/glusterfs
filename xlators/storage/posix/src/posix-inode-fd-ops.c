@@ -1387,7 +1387,7 @@ out:
 static void
 posix_add_fd_to_cleanup(xlator_t *this, struct posix_fd *pfd)
 {
-    glusterfs_ctx_t *ctx = this->ctx;
+    glusterfs_ctx_t *ctx = getctx(this);
     struct posix_private *priv = this->private;
 
     pfd->xl = this;
@@ -1726,7 +1726,7 @@ posix_readv(call_frame_t *frame, xlator_t *this, fd_t *fd, size_t size,
         goto out;
     }
 
-    iobuf = iobuf_get_page_aligned(this->ctx->iobuf_pool, size, ALIGN_SIZE);
+    iobuf = iobuf_get_page_aligned(getctx(this)->iobuf_pool, size, ALIGN_SIZE);
     if (!iobuf) {
         op_errno = ENOMEM;
         goto out;

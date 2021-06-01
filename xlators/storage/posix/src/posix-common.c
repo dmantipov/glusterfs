@@ -134,7 +134,7 @@ delete_posix_diskxl(xlator_t *this)
 {
     struct posix_private *priv = this->private;
     struct posix_diskxl *pxl = priv->pxl;
-    glusterfs_ctx_t *ctx = this->ctx;
+    glusterfs_ctx_t *ctx = getctx(this);
     uint32_t count = 1;
 
     if (pxl) {
@@ -171,7 +171,7 @@ posix_notify(xlator_t *this, int32_t event, void *data, ...)
     struct timespec sleep_till = {
         0,
     };
-    glusterfs_ctx_t *ctx = this->ctx;
+    glusterfs_ctx_t *ctx = getctx(this);
 
     switch (event) {
         case GF_EVENT_PARENT_UP: {
@@ -187,7 +187,7 @@ posix_notify(xlator_t *this, int32_t event, void *data, ...)
                 pthread_mutex_lock(&priv->janitor_mutex);
                 {
                     priv->janitor_task_stop = _gf_true;
-                    ret = gf_tw_del_timer(this->ctx->tw->timer_wheel,
+                    ret = gf_tw_del_timer(getctx(this)->tw->timer_wheel,
                                           priv->janitor);
                     if (!ret) {
                         timespec_now_realtime(&sleep_till);
@@ -1271,7 +1271,7 @@ posix_fini(xlator_t *this)
 {
     struct posix_private *priv = this->private;
     gf_boolean_t health_check = _gf_false;
-    glusterfs_ctx_t *ctx = this->ctx;
+    glusterfs_ctx_t *ctx = getctx(this);
     uint32_t count;
     int ret = 0;
     int i = 0;
@@ -1304,7 +1304,7 @@ posix_fini(xlator_t *this)
 
     if (priv->janitor) {
         /*TODO: Make sure the synctask is also complete */
-        ret = gf_tw_del_timer(this->ctx->tw->timer_wheel, priv->janitor);
+        ret = gf_tw_del_timer(getctx(this)->tw->timer_wheel, priv->janitor);
         if (ret < 0) {
             gf_msg(this->name, GF_LOG_ERROR, errno, P_MSG_TIMER_DELETE_FAILED,
                    "Failed to delete janitor timer");

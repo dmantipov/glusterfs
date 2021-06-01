@@ -238,7 +238,7 @@ protocol_client_reopendir(clnt_fd_ctx_t *fdctx, xlator_t *this)
     if (ret < 0)
         goto out;
 
-    frame = create_frame(this, this->ctx->pool);
+    frame = create_frame(this, getctx(this)->pool);
     if (!frame) {
         goto out;
     }
@@ -283,7 +283,7 @@ protocol_client_reopenfile(clnt_fd_ctx_t *fdctx, xlator_t *this)
 
     conf = this->private;
 
-    frame = create_frame(this, this->ctx->pool);
+    frame = create_frame(this, getctx(this)->pool);
     if (!frame) {
         goto out;
     }
@@ -470,7 +470,7 @@ protocol_client_reopendir_v2(clnt_fd_ctx_t *fdctx, xlator_t *this)
     if (ret < 0)
         goto out;
 
-    frame = create_frame(this, this->ctx->pool);
+    frame = create_frame(this, getctx(this)->pool);
     if (!frame) {
         ret = -1;
         goto out;
@@ -512,7 +512,7 @@ protocol_client_reopenfile_v2(clnt_fd_ctx_t *fdctx, xlator_t *this)
     };
     clnt_local_t *local = NULL;
     clnt_conf_t *conf = this->private;
-    call_frame_t *frame = create_frame(this, this->ctx->pool);
+    call_frame_t *frame = create_frame(this, getctx(this)->pool);
 
     if (!frame) {
         ret = -1;
@@ -703,7 +703,7 @@ client_setvolume_cbk(struct rpc_req *req, struct iovec *iov, int count,
     glusterfs_ctx_t *ctx = NULL;
 
     GF_VALIDATE_OR_GOTO(this->name, conf, out);
-    ctx = this->ctx;
+    ctx = getctx(this);
     GF_VALIDATE_OR_GOTO(this->name, ctx, out);
 
     if (-1 == req->rpc_status) {
@@ -761,7 +761,7 @@ client_setvolume_cbk(struct rpc_req *req, struct iovec *iov, int count,
             auth_fail = _gf_true;
             op_ret = 0;
         }
-        if ((op_errno == ENOENT) && this->ctx->cmd_args.subdir_mount &&
+        if ((op_errno == ENOENT) && getctx(this)->cmd_args.subdir_mount &&
             (ctx->graph_id <= 1)) {
             /* A case of subdir not being present at the moment,
                ride on auth_fail framework to notify the error */
@@ -957,7 +957,7 @@ client_setvolume(xlator_t *this, struct rpc_clnt *rpc)
     }
 
     ret = gf_asprintf(&process_uuid_xl, GLUSTER_PROCESS_UUID_FMT,
-                      this->ctx->process_uuid, this->graph->id, getpid(),
+                      getctx(this)->process_uuid, this->graph->id, getpid(),
                       hostname, this->name, counter_str);
     if (-1 == ret) {
         gf_smsg(this->name, GF_LOG_ERROR, 0, PC_MSG_PROCESS_UUID_SET_FAIL,
@@ -972,9 +972,9 @@ client_setvolume(xlator_t *this, struct rpc_clnt *rpc)
         goto fail;
     }
 
-    if (this->ctx->cmd_args.process_name) {
+    if (getctx(this)->cmd_args.process_name) {
         ret = dict_set_str_sizen(options, "process-name",
-                                 this->ctx->cmd_args.process_name);
+                                 getctx(this)->cmd_args.process_name);
         if (ret < 0) {
             gf_smsg(this->name, GF_LOG_INFO, 0, PC_MSG_DICT_SET_FAILED,
                     "process-name", NULL);
@@ -998,13 +998,13 @@ client_setvolume(xlator_t *this, struct rpc_clnt *rpc)
     if (strncmp("snapd", remote_subvol, 5)) {
         /* If any value is set, the first element will be non-0.
            It would be '0', but not '\0' :-) */
-        if (!this->ctx->volume_id[0]) {
-            strncpy(this->ctx->volume_id, this->graph->volume_id,
+        if (!getctx(this)->volume_id[0]) {
+            strncpy(getctx(this)->volume_id, this->graph->volume_id,
                     GF_UUID_BUF_SIZE - 1);
-            this->ctx->volume_id[GF_UUID_BUF_SIZE - 1] = '\0';
+            getctx(this)->volume_id[GF_UUID_BUF_SIZE - 1] = '\0';
         }
-        if (this->ctx->volume_id[0]) {
-            ret = dict_set_str(options, "volume-id", this->ctx->volume_id);
+        if (getctx(this)->volume_id[0]) {
+            ret = dict_set_str(options, "volume-id", getctx(this)->volume_id);
             if (ret < 0) {
                 gf_smsg(this->name, GF_LOG_INFO, 0, PC_MSG_DICT_SET_FAILED,
                         "volume-id", NULL);
@@ -1012,10 +1012,10 @@ client_setvolume(xlator_t *this, struct rpc_clnt *rpc)
         }
     }
 
-    if (this->ctx->cmd_args.volfile_server) {
-        if (this->ctx->cmd_args.volfile_id) {
+    if (getctx(this)->cmd_args.volfile_server) {
+        if (getctx(this)->cmd_args.volfile_id) {
             ret = dict_set_str_sizen(options, "volfile-key",
-                                     this->ctx->cmd_args.volfile_id);
+                                     getctx(this)->cmd_args.volfile_id);
             if (ret)
                 gf_smsg(this->name, GF_LOG_ERROR, 0,
                         PC_MSG_VOLFILE_KEY_SET_FAILED, NULL);
@@ -1027,9 +1027,9 @@ client_setvolume(xlator_t *this, struct rpc_clnt *rpc)
                     NULL);
     }
 
-    if (this->ctx->cmd_args.subdir_mount) {
+    if (getctx(this)->cmd_args.subdir_mount) {
         ret = dict_set_str_sizen(options, "subdir-mount",
-                                 this->ctx->cmd_args.subdir_mount);
+                                 getctx(this)->cmd_args.subdir_mount);
         if (ret) {
             gf_log(THIS->name, GF_LOG_ERROR, "Failed to set subdir_mount");
             /* It makes sense to fail, as per the CLI, we
@@ -1061,7 +1061,7 @@ client_setvolume(xlator_t *this, struct rpc_clnt *rpc)
         goto fail;
     }
 
-    fr = create_frame(this, this->ctx->pool);
+    fr = create_frame(this, getctx(this)->pool);
     if (!fr)
         goto fail;
 
@@ -1266,7 +1266,7 @@ client_query_portmap(xlator_t *this, struct rpc_clnt *rpc)
         }
     }
 
-    fr = create_frame(this, this->ctx->pool);
+    fr = create_frame(this, getctx(this)->pool);
     if (!fr) {
         ret = -1;
         goto fail;
@@ -1366,7 +1366,7 @@ client_handshake(xlator_t *this, struct rpc_clnt *rpc)
         goto out;
     }
 
-    frame = create_frame(this, this->ctx->pool);
+    frame = create_frame(this, getctx(this)->pool);
     if (!frame)
         goto out;
 

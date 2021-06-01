@@ -196,7 +196,7 @@ gd_syncop_submit_request(struct rpc_clnt *rpc, void *req, void *local,
     if (!iobref)
         goto out;
 
-    frame = create_frame(THIS, THIS->ctx->pool);
+    frame = create_frame(THIS, getctx(THIS)->pool);
     if (!frame)
         goto out;
 

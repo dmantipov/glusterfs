@@ -123,7 +123,7 @@ xlator_instantiate_va(const char *type, const char *format, va_list arg)
     xl->name = volname;
     CDS_INIT_LIST_HEAD(&xl->volume_options);
 
-    xl->ctx = this->ctx;
+    setctx(xl, getctx(this));
 
     return xl;
 

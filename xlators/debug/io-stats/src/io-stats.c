@@ -2932,7 +2932,7 @@ conditional_dump(dict_t *dict, char *key, data_t *value, void *data)
 
     /* Don't do this on 'brick-side', only do this on client side */
     /* Addresses CVE-2018-14659 */
-    if (this->ctx->process_mode != GF_CLIENT_PROCESS) {
+    if (getctx(this)->process_mode != GF_CLIENT_PROCESS) {
         gf_log(this->name, GF_LOG_DEBUG,
                "taking io-stats dump using setxattr not permitted on brick."
                " Use 'gluster profile' instead");
@@ -3673,7 +3673,7 @@ xlator_set_loglevel(xlator_t *this, int log_level)
     xlator_t *top = NULL;
     xlator_t *trav = this;
 
-    ctx = this->ctx;
+    ctx = getctx(this);
     GF_ASSERT(ctx);
     active = ctx->active;
     top = active->first;
@@ -3694,7 +3694,7 @@ xlator_set_loglevel(xlator_t *this, int log_level)
             trav = trav->next;
         }
     } else {
-        gf_log_set_loglevel(this->ctx, log_level);
+        gf_log_set_loglevel(getctx(this), log_level);
     }
 }
 
@@ -3977,7 +3977,7 @@ init(xlator_t *this)
     if (log_str) {
         log_level = glusterd_check_log_level(log_str);
         if (DEFAULT_LOG_LEVEL != log_level)
-            gf_log_set_loglevel(this->ctx, log_level);
+            gf_log_set_loglevel(getctx(this), log_level);
     }
 
     GF_OPTION_INIT("logger", logger_str, str, out);

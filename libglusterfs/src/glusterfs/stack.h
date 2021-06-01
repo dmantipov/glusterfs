@@ -346,7 +346,7 @@ get_the_pt_fop(void *base_fop, int fop_idx)
                      "stack-address: %p, "                                     \
                      "winding from %s to %s",                                  \
                      frame->root, old_THIS->name, THIS->name);                 \
-        if (obj->ctx->measure_latency)                                         \
+        if (getctx(obj)->measure_latency)                                      \
             timespec_now(&_new->begin);                                        \
         _new->op = get_fop_index_from_fn((_new->this), (fn));                  \
         if (!obj->pass_through) {                                              \
@@ -403,7 +403,7 @@ get_the_pt_fop(void *base_fop, int fop_idx)
         THIS = _parent->this;                                                  \
         frame->complete = _gf_true;                                            \
         frame->unwind_from = __FUNCTION__;                                     \
-        if (frame->this->ctx->measure_latency) {                               \
+        if (getctx(frame->this)->measure_latency) {                            \
             timespec_now(&frame->end);                                         \
             /* required for top most xlator */                                 \
             if (_parent->ret == NULL)                                          \

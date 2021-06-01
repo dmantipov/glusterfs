@@ -3034,7 +3034,7 @@ client4_0_lookup(call_frame_t *frame, xlator_t *this, void *data)
             /* TODO: what is the size we should send ? */
             /* This change very much depends on quick-read
                changes */
-            rsp_iobuf = iobuf_get(this->ctx->iobuf_pool);
+            rsp_iobuf = iobuf_get(getctx(this)->iobuf_pool);
             if (rsp_iobuf == NULL) {
                 goto unwind;
             }
@@ -3832,7 +3832,7 @@ client4_0_readv(call_frame_t *frame, xlator_t *this, void *data)
     }
     local = frame->local;
 
-    rsp_iobuf = iobuf_get2(this->ctx->iobuf_pool, args->size);
+    rsp_iobuf = iobuf_get2(getctx(this)->iobuf_pool, args->size);
     if (rsp_iobuf == NULL) {
         op_errno = ENOMEM;
         goto unwind;
@@ -5018,7 +5018,7 @@ client4_0_readdir(call_frame_t *frame, xlator_t *this, void *data)
         /* TODO: what is the size we should send ? */
         /* This iobuf will live for only receiving the response,
            so not harmful */
-        rsp_iobuf = iobuf_get(this->ctx->iobuf_pool);
+        rsp_iobuf = iobuf_get(getctx(this)->iobuf_pool);
         if (rsp_iobuf == NULL) {
             goto unwind;
         }
@@ -5129,7 +5129,7 @@ client4_0_readdirp(call_frame_t *frame, xlator_t *this, void *data)
         /* TODO: what is the size we should send ? */
         /* This iobuf will live for only receiving the response,
            so not harmful */
-        rsp_iobuf = iobuf_get(this->ctx->iobuf_pool);
+        rsp_iobuf = iobuf_get(getctx(this)->iobuf_pool);
         if (rsp_iobuf == NULL) {
             goto unwind;
         }

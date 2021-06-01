@@ -242,7 +242,7 @@ glusterfs_graph_insert(glusterfs_graph_t *graph, glusterfs_ctx_t *ctx,
     if (!ixl)
         return -1;
 
-    ixl->ctx = ctx;
+    setctx(ixl, ctx);
     ixl->graph = graph;
     ixl->options = dict_new();
     if (!ixl->options)
@@ -615,7 +615,7 @@ glusterfs_graph_prepare(glusterfs_graph_t *graph, glusterfs_ctx_t *ctx,
 
     /* XXX: this->ctx setting */
     for (trav = graph->first; trav; trav = trav->next) {
-        trav->ctx = ctx;
+        setctx(trav, ctx);
     }
 
     /* XXX: DOB setting */
@@ -1307,7 +1307,7 @@ glusterfs_graph_attach(glusterfs_graph_t *orig_graph, char *path,
     }
 
     /* TODO memory leaks everywhere need to free graph in case of error */
-    if (glusterfs_graph_prepare(graph, this->ctx, xl->name)) {
+    if (glusterfs_graph_prepare(graph, getctx(this), xl->name)) {
         gf_log(this->name, GF_LOG_WARNING,
                "failed to prepare graph for xlator %s", xl->name);
         return -EIO;
@@ -1333,7 +1333,7 @@ glusterfs_graph_attach(glusterfs_graph_t *orig_graph, char *path,
              xl->volfile_id);
     memcpy(volfile_obj->volfile_checksum, sha256_hash,
            sizeof(volfile_obj->volfile_checksum));
-    list_add(&volfile_obj->volfile_list, &this->ctx->volfile_list);
+    list_add(&volfile_obj->volfile_list, &getctx(this)->volfile_list);
 
     return 0;
 }
@@ -1356,7 +1356,7 @@ void *
 glusterfs_graph_cleanup(void *arg)
 {
     glusterfs_graph_t *graph = NULL;
-    glusterfs_ctx_t *ctx = THIS->ctx;
+    glusterfs_ctx_t *ctx = getctx(THIS);
     int ret = -1;
     graph = arg;
 
@@ -1434,7 +1434,7 @@ glusterfs_muxsvc_setup_parent_graph(glusterfs_ctx_t *ctx, char *name,
     if (!ixl)
         goto out;
 
-    ixl->ctx = ctx;
+    setctx(ixl, ctx);
     ixl->graph = parent_graph;
     ixl->options = dict_new();
     if (!ixl->options)

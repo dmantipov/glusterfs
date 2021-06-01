@@ -1146,7 +1146,7 @@ ioc_readv(call_frame_t *frame, xlator_t *this, fd_t *fd, size_t size,
     {
         if (!ioc_inode->cache.page_table) {
             ioc_inode->cache.page_table = rbthash_table_init(
-                this->ctx, IOC_PAGE_TABLE_BUCKET_COUNT, ioc_hashfn, NULL, 0,
+	        getctx(this), IOC_PAGE_TABLE_BUCKET_COUNT, ioc_hashfn, NULL, 0,
                 table->mem_pool);
 
             if (ioc_inode->cache.page_table == NULL) {
@@ -1759,7 +1759,7 @@ init(xlator_t *this)
     }
 
     table->xl = this;
-    table->page_size = this->ctx->page_size;
+    table->page_size = getctx(this)->page_size;
 
     GF_OPTION_INIT("pass-through", this->pass_through, bool, out);
 
@@ -1834,7 +1834,7 @@ init(xlator_t *this)
 
     ret = 0;
 
-    ctx = this->ctx;
+    ctx = getctx(this);
     ioc_log2_page_size = log_base2(ctx->page_size);
 
 out:

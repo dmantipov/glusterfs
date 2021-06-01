@@ -774,7 +774,7 @@ __glusterd_send_svc_configure_req(glusterd_svc_t *svc, int flags,
     brick_req.dict.dict_val = NULL;
     brick_req.dict.dict_len = 0;
 
-    frame = create_frame(this, this->ctx->pool);
+    frame = create_frame(this, getctx(this)->pool);
     if (!frame) {
         gf_smsg(this->name, GF_LOG_ERROR, errno, GD_MSG_FRAME_CREATE_FAIL,
                 NULL);

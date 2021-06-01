@@ -42,7 +42,7 @@ create_frame(xlator_t *xl, call_pool_t *pool)
     list_add(&frame->frames, &stack->myframes);
 
     stack->pool = pool;
-    stack->ctx = xl->ctx;
+    stack->ctx = getctx(xl);
 
     if (frame->root->ctx->measure_latency) {
         timespec_now(&stack->tv);

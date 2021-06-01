@@ -545,6 +545,7 @@ fop_zerofill_stub
 generate_glusterfs_ctx_id
 get_checksum_for_file
 get_checksum_for_path
+getctx
 get_file_mtime
 get_host_name
 get_mem_size
@@ -928,6 +929,7 @@ runner_run
 runner_run_nowait
 runner_run_reuse
 runner_start
+setctx
 set_sys_log_level
 skipwhite
 strfd_close

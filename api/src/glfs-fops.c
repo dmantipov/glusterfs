@@ -1556,7 +1556,7 @@ glfs_pwritev_common(struct glfs_fd *glfd, const struct iovec *iovec, int iovcnt,
         goto out;
     }
 
-    ret = iobuf_copy(subvol->ctx->iobuf_pool, iovec, iovcnt, &iobref, &iobuf,
+    ret = iobuf_copy(getctx(subvol)->iobuf_pool, iovec, iovcnt, &iobref, &iobuf,
                      &iov);
     if (ret)
         goto out;
@@ -1906,7 +1906,7 @@ glfs_pwritev_async_common(struct glfs_fd *glfd, const struct iovec *iovec,
         goto out;
     }
 
-    ret = iobuf_copy(subvol->ctx->iobuf_pool, iovec, count, &iobref, &iobuf,
+    ret = iobuf_copy(getctx(subvol)->iobuf_pool, iovec, count, &iobref, &iobuf,
                      gio->iov);
     if (ret)
         goto out;
@@ -5924,7 +5924,7 @@ glfs_cbk_upcall_data(struct glfs *fs, struct gf_upcall *upcall_data)
     if (!args)
         goto out;
 
-    ret = synctask_new(THIS->ctx->env, glfs_cbk_upcall_syncop,
+    ret = synctask_new(getctx(THIS)->env, glfs_cbk_upcall_syncop,
                        glfs_upcall_syncop_cbk, NULL, args);
     /* should we retry incase of failure? */
     if (ret) {
@@ -6065,7 +6065,7 @@ glfs_anonymous_pwritev(struct glfs *fs, struct glfs_object *object,
 
     size = iov_length(iovec, iovcnt);
 
-    iobuf = iobuf_get2(subvol->ctx->iobuf_pool, size);
+    iobuf = iobuf_get2(getctx(subvol)->iobuf_pool, size);
     if (!iobuf) {
         ret = -1;
         errno = ENOMEM;

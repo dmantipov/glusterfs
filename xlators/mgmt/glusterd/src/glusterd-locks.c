@@ -587,7 +587,7 @@ glusterd_mgmt_v3_lock(const char *name, uuid_t uuid, uint32_t *op_errno,
         goto out;
     }
 
-    mgmt_lock_timer_ctx = mgmt_lock_timer_xl->ctx;
+    mgmt_lock_timer_ctx = getctx(mgmt_lock_timer_xl);
     if (!mgmt_lock_timer_ctx) {
         GF_FREE(mgmt_lock_timer);
         goto out;
@@ -688,7 +688,7 @@ out:
         mgmt_lock_timer_xl = mgmt_lock_timer->xl;
         GF_VALIDATE_OR_GOTO(this->name, mgmt_lock_timer_xl, ret_function);
 
-        mgmt_lock_timer_ctx = mgmt_lock_timer_xl->ctx;
+        mgmt_lock_timer_ctx = getctx(mgmt_lock_timer_xl);
         GF_VALIDATE_OR_GOTO(this->name, mgmt_lock_timer_ctx, ret_function);
 
         timer = mgmt_lock_timer->timer;
@@ -815,7 +815,7 @@ glusterd_mgmt_v3_unlock(const char *name, uuid_t uuid, char *type)
         mgmt_lock_timer_xl = mgmt_lock_timer->xl;
         GF_VALIDATE_OR_GOTO(this->name, mgmt_lock_timer_xl, out);
 
-        mgmt_lock_timer_ctx = mgmt_lock_timer_xl->ctx;
+        mgmt_lock_timer_ctx = getctx(mgmt_lock_timer_xl);
         GF_VALIDATE_OR_GOTO(this->name, mgmt_lock_timer_ctx, out);
         ret = 0;
 

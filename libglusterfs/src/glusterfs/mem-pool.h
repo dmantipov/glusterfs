@@ -332,7 +332,7 @@ mem_pool_new_fn(glusterfs_ctx_t *ctx, unsigned long sizeof_type,
                 unsigned long count, char *name);
 
 #define mem_pool_new(type, count)                                              \
-    mem_pool_new_fn(THIS->ctx, sizeof(type), count, #type)
+    mem_pool_new_fn(getctx(THIS), sizeof(type), count, #type)
 
 #define mem_pool_new_ctx(ctx, type, count)                                     \
     mem_pool_new_fn(ctx, sizeof(type), count, #type)

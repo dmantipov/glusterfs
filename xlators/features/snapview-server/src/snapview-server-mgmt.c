@@ -90,11 +90,11 @@ svs_mgmt_init(xlator_t *this)
 
     GF_VALIDATE_OR_GOTO("snapview-server", this, out);
     GF_VALIDATE_OR_GOTO(this->name, this->private, out);
-    GF_VALIDATE_OR_GOTO(this->name, this->ctx, out);
+    GF_VALIDATE_OR_GOTO(this->name, getctx(this), out);
 
     priv = this->private;
 
-    ctx = this->ctx;
+    ctx = getctx(this);
     cmd_args = &ctx->cmd_args;
 
     host = "localhost";
@@ -255,7 +255,7 @@ mgmt_get_snapinfo_cbk(struct rpc_req *req, struct iovec *iov, int count,
 
     frame = myframe;
     this = frame->this;
-    ctx = frame->this->ctx;
+    ctx = getctx(frame->this);
     priv = this->private;
 
     if (!ctx) {
@@ -456,7 +456,7 @@ svs_get_snapshot_list(xlator_t *this)
 
     GF_VALIDATE_OR_GOTO("snapview-server", this, out);
 
-    ctx = this->ctx;
+    ctx = getctx(this);
     if (!ctx) {
         gf_msg(this->name, GF_LOG_ERROR, 0, SVS_MSG_NULL_CTX, "ctx is NULL");
         goto out;

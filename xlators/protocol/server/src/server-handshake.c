@@ -259,7 +259,7 @@ server_setvolume(rpcsvc_request_t *req)
         req->rpc_err = GARBAGE_ARGS;
         goto fail;
     }
-    ctx = THIS->ctx;
+    ctx = getctx(THIS);
 
     this = req->svc->xl;
     /* this is to ensure config_params is populated with the first brick
@@ -647,7 +647,7 @@ server_setvolume(rpcsvc_request_t *req)
     }
     UNLOCK(&conf->itable_lock);
 
-    ret = dict_set_str(reply, "process-uuid", this->ctx->process_uuid);
+    ret = dict_set_str(reply, "process-uuid", getctx(this)->process_uuid);
     if (ret)
         gf_msg_debug(this->name, 0, "failed to set 'process-uuid'");
 

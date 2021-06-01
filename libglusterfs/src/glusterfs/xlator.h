@@ -863,6 +863,12 @@ struct _xlator {
     uint32_t parent_down;
 };
 
+glusterfs_ctx_t *
+getctx(xlator_t *);
+
+void
+setctx(xlator_t *, glusterfs_ctx_t *);
+
 /* This would be the only structure which needs to be exported by
    the translators. For the backward compatibility, in 4.x series
    even the old exported fields will be supported */

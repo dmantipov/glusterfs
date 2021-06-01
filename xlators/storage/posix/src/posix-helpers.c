@@ -1538,7 +1538,7 @@ posix_janitor_task_initator(struct gf_tw_timer_list *timer, void *data,
 
     this = data;
 
-    ret = synctask_new(this->ctx->env, posix_janitor_task,
+    ret = synctask_new(getctx(this)->env, posix_janitor_task,
                        posix_janitor_task_done, NULL, this);
     if (ret < 0) {
         gf_msg(this->name, GF_LOG_ERROR, errno, P_MSG_THREAD_FAILED,
@@ -1562,7 +1562,7 @@ __posix_janitor_timer_start(xlator_t *this)
     timer->expires = priv->janitor_sleep_duration;
     timer->function = posix_janitor_task_initator;
     timer->data = this;
-    gf_tw_add_timer(glusterfs_ctx_tw_get(this->ctx), timer);
+    gf_tw_add_timer(glusterfs_ctx_tw_get(getctx(this)), timer);
 
     return;
 }
@@ -1665,7 +1665,7 @@ posix_spawn_ctx_janitor_thread(xlator_t *this)
     int ret = 0;
     glusterfs_ctx_t *ctx = NULL;
 
-    ctx = this->ctx;
+    ctx = getctx(this);
 
     pthread_mutex_lock(&ctx->fd_lock);
     {
@@ -2110,7 +2110,7 @@ posix_health_check_thread_proc(void *data)
     xlator_list_t **trav_p = NULL;
     int count = 0;
     gf_boolean_t victim_found = _gf_false;
-    glusterfs_ctx_t *ctx = THIS->ctx;
+    glusterfs_ctx_t *ctx = getctx(THIS);
     char file_path[PATH_MAX];
 
     /* prevent races when the interval is updated */
@@ -2170,8 +2170,8 @@ abort:
     /* Below code is use to ensure if brick multiplexing is enabled if
        count is more than 1 it means brick mux has enabled
     */
-    if (this->ctx->active) {
-        top = this->ctx->active->first;
+    if (getctx(this)->active) {
+        top = getctx(this)->active->first;
         LOCK(&ctx->volfile_lock);
         for (trav_p = &top->children; *trav_p; trav_p = &(*trav_p)->next) {
             count++;
@@ -2358,7 +2358,7 @@ int
 posix_spawn_disk_space_check_thread(xlator_t *this)
 {
     int ret = 0;
-    glusterfs_ctx_t *ctx = this->ctx;
+    glusterfs_ctx_t *ctx = getctx(this);
     struct posix_diskxl *pxl = NULL;
     struct posix_private *priv = this->private;
 

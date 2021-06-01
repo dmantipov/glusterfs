@@ -194,7 +194,7 @@ create_primary(struct glfs *fs)
         goto err;
     }
 
-    primary->ctx = fs->ctx;
+    setctx(primary, fs->ctx);
     primary->private = fs;
     primary->options = dict_new();
     if (!primary->options)
@@ -781,7 +781,7 @@ glfs_init_global_ctx()
 
     pthread_mutex_lock(&global_ctx_mutex);
     {
-        if (global_xlator.ctx)
+        if (getctx(&global_xlator))
             goto unlock;
 
         ctx = glusterfs_ctx_new();
@@ -793,12 +793,12 @@ glfs_init_global_ctx()
         gf_log_globals_init(ctx, GF_LOG_NONE);
 
         global_ctx = ctx;
-        global_xlator.ctx = global_ctx;
+        setctx(&global_xlator, global_ctx);
 
         ret = glusterfs_ctx_defaults_init(ctx);
         if (ret) {
             global_ctx = NULL;
-            global_xlator.ctx = NULL;
+            setctx(&global_xlator, NULL);
             goto unlock;
         }
     }

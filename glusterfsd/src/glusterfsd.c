@@ -587,7 +587,7 @@ create_fuse_mount(glusterfs_ctx_t *ctx)
         goto err;
     }
 
-    root->ctx = ctx;
+    setctx(root, ctx);
     root->options = dict_new();
     if (!root->options)
         goto err;
@@ -2619,7 +2619,7 @@ main(int argc, char *argv[])
     if (ret)
         return ret;
 
-    THIS->ctx = ctx;
+    setctx(THIS, ctx);
 
     ret = glusterfs_ctx_defaults_init(ctx);
     if (ret)

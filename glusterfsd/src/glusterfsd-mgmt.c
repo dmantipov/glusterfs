@@ -96,7 +96,7 @@ mgmt_process_volfile(const char *volfile, ssize_t size, char *volfile_id,
     char template[] = "/tmp/glfs.volfile.XXXXXX";
 
     glusterfs_compute_sha256((const unsigned char *)volfile, size, sha256_hash);
-    ctx = THIS->ctx;
+    ctx = getctx(THIS);
     LOCK(&ctx->volfile_lock);
     {
         list_for_each_entry(volfile_obj, &ctx->volfile_list, volfile_list)
@@ -973,7 +973,7 @@ glusterfs_handle_attach(rpcsvc_request_t *req)
     this = THIS;
     GF_ASSERT(this);
 
-    ctx = this->ctx;
+    ctx = getctx(this);
     if (!ctx->cmd_args.volfile_id) {
         gf_log(THIS->name, GF_LOG_ERROR,
                "No volfile-id provided, erroring out");
@@ -990,7 +990,7 @@ glusterfs_handle_attach(rpcsvc_request_t *req)
     }
     ret = 0;
 
-    if (!this->ctx->active) {
+    if (!getctx(this)->active) {
         gf_log(this->name, GF_LOG_WARNING,
                "got attach for %s but no active graph", xlator_req.name);
         goto post_unlock;
@@ -1000,7 +1000,7 @@ glusterfs_handle_attach(rpcsvc_request_t *req)
 
     LOCK(&ctx->volfile_lock);
     {
-        ret = glusterfs_graph_attach(this->ctx->active, xlator_req.name,
+        ret = glusterfs_graph_attach(getctx(this)->active, xlator_req.name,
                                      &newgraph);
         if (!ret && (newgraph && newgraph->first)) {
             nextchild = newgraph->first;
@@ -1013,9 +1013,9 @@ glusterfs_handle_attach(rpcsvc_request_t *req)
             /* we need a protocol/server xlator as
              * nextchild
              */
-            srv_xl = this->ctx->active->first;
+            srv_xl = getctx(this)->active->first;
             srv_conf = (server_conf_t *)srv_xl->private;
-            rpcsvc_autoscale_threads(this->ctx, srv_conf->rpc, 1);
+            rpcsvc_autoscale_threads(getctx(this), srv_conf->rpc, 1);
         }
         if (ret) {
             ret = -1;
@@ -1186,7 +1186,7 @@ glusterfs_handle_dump_metrics(rpcsvc_request_t *req)
         return -1;
     }
     ret = -1;
-    ctx = this->ctx;
+    ctx = getctx(this);
 
     /* Infra for monitoring */
     filepath = gf_monitor_metrics(ctx);
@@ -2152,7 +2152,7 @@ mgmt_getspec_cbk(struct rpc_req *req, struct iovec *iov, int count,
     char template[] = "/tmp/glfs.volfile.XXXXXX";
 
     frame = myframe;
-    ctx = frame->this->ctx;
+    ctx = getctx(frame->this);
 
     if (-1 == req->rpc_status) {
         ret = -1;
@@ -2660,7 +2660,7 @@ mgmt_rpc_notify(struct rpc_clnt *rpc, void *mydata, rpc_clnt_event_t event,
 
     this = mydata;
     rpc_trans = rpc->conn.trans;
-    ctx = this->ctx;
+    ctx = getctx(this);
 
     switch (event) {
         case RPC_CLNT_DISCONNECT:
